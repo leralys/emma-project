@@ -1,0 +1,37 @@
+services:
+  # Backend API
+  - type: web
+    name: emma-backend
+    env: node
+    region: oregon
+    plan: free  # Free tier - will sleep after 15 minutes of inactivity
+    buildCommand: pnpm install && pnpm db:generate && pnpm build:backend
+    startCommand: node dist/apps/main.js
+    autoDeploy: true  # auto deploy on push
+    # healthCheckPath disabled to not waste requests
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_SUBJECT
+        sync: false
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET_NAME
+        sync: false
+
+  # Note: Frontend is deployed to Vercel instead of Render
+  # See docs/vercel-deployment.md for frontend deployment instructions
+  # Vercel offers better performance, preview deployments, and analytics for free
+
