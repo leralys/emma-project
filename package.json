@@ -37,7 +37,8 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
-    "generate:vapid": "tsx scripts/generate-vapid-keys.ts"
+    "generate:vapid": "tsx scripts/generate-vapid-keys.ts",
+    "hash:password": "tsx scripts/hash-password.ts"
   },
   "private": true,
   "prisma": {

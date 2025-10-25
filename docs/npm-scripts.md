@@ -167,7 +167,51 @@ Removes `dist`, `node_modules`, and Nx cache. Useful for troubleshooting.
 pnpm generate:vapid
 ```
 
-Generates VAPID keys for web push notifications.
+Generates VAPID keys for web push notifications. See [Web Push Setup](web-push-setup.md) for details.
+
+**Example output:**
+
+```
+🔐 Generating VAPID keys for Web Push...
+✅ VAPID keys generated successfully!
+```
+
+### Hash Password
+
+```bash
+pnpm hash:password "your-password"
+```
+
+Hashes a password using Argon2 (the same algorithm used in the application). Useful for:
+
+- Generating the `ADMIN_PASSWORD_HASH` environment variable
+- Testing authentication flows
+
+**Example:**
+
+```bash
+pnpm hash:password "MySecurePassword123"
+
+# Output:
+# 🔐 Hashing password with Argon2...
+# ✅ Password hashed successfully!
+# 📋 Hashed password:
+# $argon2id$v=19$m=65536,t=3,p=4$randomsalt$hashvalue...
+```
+
+**Common Use Cases:**
+
+**1. Generate Admin Password Hash (for environment variables):**
+
+```bash
+# Generate hash for your admin password
+pnpm hash:password "YourSecureAdminPassword"
+
+# Copy the output hash and add to .env:
+ADMIN_PASSWORD_HASH="$argon2id$v=19$m=65536,t=3,p=4$..."
+```
+
+**Security Note:** Argon2 is a memory-hard password hashing algorithm that's resistant to GPU-based attacks. Each hash includes a random salt, so the same password will generate different hashes each time.
 
 ---
 
@@ -190,6 +234,7 @@ Generates VAPID keys for web push notifications.
 | `pnpm db:studio`      | 📊 Open database GUI        |
 | `pnpm db:seed`        | 🌱 Seed database            |
 | `pnpm generate:vapid` | 🔑 Generate VAPID keys      |
+| `pnpm hash:password`  | 🔐 Hash password (Argon2)   |
 | `pnpm graph`          | 📊 View project graph       |
 | `pnpm clean`          | 🧹 Clean build artifacts    |
 

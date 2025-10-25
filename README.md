@@ -118,19 +118,28 @@ pnpm db:seed          # Seed with example data
 ```bash
 pnpm graph            # View project dependency graph
 pnpm clean            # Clean build artifacts
-pnpm generate:vapid   # Generate VAPID keys
+pnpm generate:vapid   # Generate VAPID keys for Web Push
+pnpm hash:password    # Hash password with Argon2 (for ADMIN_PASSWORD_HASH)
 ```
 
 See [docs/npm-scripts.md](docs/npm-scripts.md) for detailed documentation.
 
 ## 📚 Documentation
 
+### Getting Started
+
+- [Setup & Installation Guide](docs/setup-installation.md) - **Start here!** Complete setup instructions
 - [NPM Scripts Reference](docs/npm-scripts.md)
-- [Libraries Usage Guide](docs/libraries-usage.md)
 - [Database Setup](docs/database-setup.md) - Neon + Prisma configuration
+
+### Features & Configuration
+
 - [Cloudflare R2 Setup](docs/cloudflare-r2-setup.md) - Object storage with zero egress fees
 - [Web Push Setup](docs/web-push-setup.md) - Push notifications with VAPID
 - [PWA Setup](docs/pwa-setup.md) - Progressive Web App configuration
+
+### Development Workflow
+
 - [Code Quality Setup](docs/code-quality-setup.md) - Prettier, Husky, lint-staged
 - [Pre-commit Workflow](docs/pre-commit-workflow.md) - How git hooks work
 - [Git Commands Cheatsheet](docs/git-commands-cheatsheet.md) - Quick reference
