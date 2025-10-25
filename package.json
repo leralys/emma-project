@@ -40,6 +40,9 @@
     "generate:vapid": "tsx scripts/generate-vapid-keys.ts"
   },
   "private": true,
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.916.0",
     "@aws-sdk/s3-request-presigner": "^3.916.0",
@@ -50,6 +53,7 @@
     "@nestjs/platform-express": "^11.0.0",
     "@prisma/adapter-neon": "^6.18.0",
     "@prisma/client": "^6.18.0",
+    "argon2": "^0.44.0",
     "axios": "^1.6.0",
     "create-nx": "0.0.0",
     "date-fns": "^4.1.0",
