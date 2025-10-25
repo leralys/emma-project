@@ -10,11 +10,94 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  url       = env("DATABASE_URL") // Neon pooled
+  directUrl = env("DIRECT_URL") // Neon direct
 }
 
 enum Role {
   admin
   user
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String?
+  passwordHash String? // Only for admins
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  roles        UserRole[]
+  devices      Device[]
+  participants ThreadParticipant[]
+  messages     Message[]           @relation("UserMessages")
+
+  @@map("users")
+}
+
+model UserRole {
+  userId String
+  role   Role
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, role])
+  @@map("user_roles")
+}
+
+model Device {
+  id           String   @id @default(cuid())
+  userId       String
+  keyHash      String   @unique
+  revoked      Boolean  @default(false)
+  pushEndpoint String?
+  pushP256dh   String?
+  pushAuth     String?
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("devices")
+}
+
+model Thread {
+  id           String              @id @default(cuid())
+  title        String?
+  createdAt    DateTime            @default(now())
+  participants ThreadParticipant[]
+  messages     Message[]
+
+  @@map("threads")
+}
+
+model ThreadParticipant {
+  threadId String
+  userId   String
+
+  thread Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([threadId, userId])
+  @@map("thread_participants")
+}
+
+model Message {
+  id             String    @id @default(cuid())
+  threadId       String
+  senderId       String
+  scheduledAtUTC DateTime? // Only set by admin for scheduled messages
+  delivered      Boolean   @default(false)
+  deliveredAtUTC DateTime?
+  ciphertext     Bytes
+  iv             Bytes
+  salt           Bytes
+  mediaUrls      String[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  thread Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  sender User   @relation("UserMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([scheduledAtUTC])
+  @@index([delivered, threadId])
+  @@map("messages")
 }
