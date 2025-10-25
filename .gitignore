@@ -69,9 +69,6 @@ Thumbs.db
 *.db
 *.db-journal
 
-# Database
-prisma/migrations/**/migration.sql
-
 # PWA
 public/sw.js
 public/workbox-*.js
