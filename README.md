@@ -55,7 +55,9 @@ emma-project/
 - **TypeScript** - Type-safe JavaScript
 - **Prisma** - Next-generation ORM
 - **Neon** - Serverless Postgres database
-- **web-push** - Push notifications
+- **Argon2** - Secure password hashing
+- **Web Push** - Push notifications
+- **Cloudflare R2** - Object storage (S3-compatible)
 
 ### Development Tools
 
@@ -101,11 +103,22 @@ pnpm format           # Format all code
 pnpm typecheck        # Type check TypeScript
 ```
 
+### Database
+
+```bash
+pnpm db:generate      # Generate Prisma Client
+pnpm db:push          # Push schema to database
+pnpm db:migrate       # Create migration
+pnpm db:studio        # Open database GUI
+pnpm db:seed          # Seed with example data
+```
+
 ### Utilities
 
 ```bash
 pnpm graph            # View project dependency graph
 pnpm clean            # Clean build artifacts
+pnpm generate:vapid   # Generate VAPID keys
 ```
 
 See [docs/npm-scripts.md](docs/npm-scripts.md) for detailed documentation.
@@ -118,12 +131,15 @@ See [docs/npm-scripts.md](docs/npm-scripts.md) for detailed documentation.
 - [Cloudflare R2 Setup](docs/cloudflare-r2-setup.md) - Object storage with zero egress fees
 - [Web Push Setup](docs/web-push-setup.md) - Push notifications with VAPID
 - [PWA Setup](docs/pwa-setup.md) - Progressive Web App configuration
-- [Vercel Deployment](docs/vercel-deployment.md) - Deploy frontend to Vercel (recommended)
-- [Render Deployment](docs/render-deployment.md) - Deploy backend to Render
-- [Secrets Management](docs/secrets-management.md) - Secure secrets storage for deployment
-- [Code Quality Setup](docs/code-quality-setup.md) - Prettier, Husky, lint-staged, React Icons
+- [Code Quality Setup](docs/code-quality-setup.md) - Prettier, Husky, lint-staged
 - [Pre-commit Workflow](docs/pre-commit-workflow.md) - How git hooks work
-- [Git Commands Cheatsheet](docs/git-commands-cheatsheet.md) - Quick reference for commits & amends
+- [Git Commands Cheatsheet](docs/git-commands-cheatsheet.md) - Quick reference
+
+### Deployment
+
+- [Vercel Deployment](docs/vercel-deployment.md) - Deploy frontend (recommended)
+- [Render Deployment](docs/render-deployment.md) - Deploy backend
+- [Secrets Management](docs/secrets-management.md) - Environment variables & secrets
 - [Shared Types Library](libs/types/README.md)
 
 ## 🏗️ Development

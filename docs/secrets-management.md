@@ -81,33 +81,26 @@ const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 2. **Environment → Environment Variables**
 3. **Add your secrets:**
 
-   | Key                    | Value                                 |
-   | ---------------------- | ------------------------------------- |
-   | `DATABASE_URL`         | `postgresql://...`                    |
-   | `DIRECT_URL`           | `postgresql://...`                    |
-   | `VAPID_PUBLIC_KEY`     | `your-vapid-public-key`               |
-   | `VAPID_PRIVATE_KEY`    | `your-vapid-private-key`              |
-   | `VAPID_SUBJECT`        | `mailto:your@email.com`               |
-   | `R2_ACCOUNT_ID`        | `your-r2-account-id`                  |
-   | `R2_ACCESS_KEY_ID`     | `your-access-key`                     |
-   | `R2_SECRET_ACCESS_KEY` | `your-secret-key`                     |
-   | `R2_BUCKET_NAME`       | `your-bucket-name`                    |
-   | `JWT_SECRET`           | Generate with: `openssl rand -hex 32` |
+   | Key                    | Value                    |
+   | ---------------------- | ------------------------ |
+   | `DATABASE_URL`         | `postgresql://...`       |
+   | `DIRECT_URL`           | `postgresql://...`       |
+   | `VAPID_PUBLIC_KEY`     | `your-vapid-public-key`  |
+   | `VAPID_PRIVATE_KEY`    | `your-vapid-private-key` |
+   | `VAPID_SUBJECT`        | `mailto:your@email.com`  |
+   | `R2_ACCOUNT_ID`        | `your-r2-account-id`     |
+   | `R2_ACCESS_KEY_ID`     | `your-access-key`        |
+   | `R2_SECRET_ACCESS_KEY` | `your-secret-key`        |
+   | `R2_BUCKET_NAME`       | `your-bucket-name`       |
 
 4. **Click "Save Changes"**
 5. **Auto-redeploys** - Service restarts automatically
 
-### Generating Secure Secrets
+### Generating Secrets
 
 ```bash
-# Generate random JWT secret
-openssl rand -hex 32
-
-# Generate VAPID keys (already have script)
+# Generate VAPID keys
 pnpm generate:vapid
-
-# Generate API key
-openssl rand -base64 32
 ```
 
 ### Using Secrets in Code
@@ -115,14 +108,13 @@ openssl rand -base64 32
 ```typescript
 // ✅ Access via process.env (Node.js)
 const dbUrl = process.env.DATABASE_URL;
-const jwtSecret = process.env.JWT_SECRET;
+const vapidKey = process.env.VAPID_PUBLIC_KEY;
 
 // ✅ With validation
 import { z } from 'zod';
 
 const envSchema = z.object({
   DATABASE_URL: z.string().url(),
-  JWT_SECRET: z.string().min(32),
   VAPID_PUBLIC_KEY: z.string(),
   VAPID_PRIVATE_KEY: z.string(),
 });
@@ -169,10 +161,8 @@ services:
 
 - `DATABASE_URL` - Database connection string
 - `DIRECT_URL` - Database direct connection
-- `JWT_SECRET` - Token signing key
 - `VAPID_PRIVATE_KEY` - Push notification private key
 - `R2_SECRET_ACCESS_KEY` - Storage secret key
-- `SESSION_SECRET` - Session encryption key
 
 ### Semi-Public (Frontend)
 
@@ -223,13 +213,8 @@ R2_ACCESS_KEY_ID=...
 R2_SECRET_ACCESS_KEY=...
 R2_BUCKET_NAME=emma-storage
 
-# Security
-JWT_SECRET=<generate with openssl rand -hex 32>
-SESSION_SECRET=<generate with openssl rand -hex 32>
-
 # Optional
 CORS_ORIGIN=https://emma-frontend.vercel.app
-SENTRY_DSN=https://...
 ```
 
 ---
@@ -248,10 +233,11 @@ SENTRY_DSN=https://...
 
    ```bash
    # .env (gitignored)
-   DATABASE_URL=postgresql://localhost:5432/emma_dev
-   JWT_SECRET=local-dev-secret-not-secure
+   DATABASE_URL=postgresql://...
+   DIRECT_URL=postgresql://...
    VAPID_PUBLIC_KEY=...
    VAPID_PRIVATE_KEY=...
+   VAPID_SUBJECT=mailto:your@email.com
    ```
 
 3. **Use in development:**
@@ -309,20 +295,7 @@ VITE_VAPID_PUBLIC_KEY=new-key
 # Users need to re-subscribe
 ```
 
-#### 3. **JWT Secret**
-
-```bash
-# Generate new secret
-openssl rand -hex 32
-
-# Update in Render
-JWT_SECRET=new-secret
-
-# ⚠️ All existing sessions/tokens become invalid
-# Users need to re-login
-```
-
-#### 4. **R2 Keys (Cloudflare)**
+#### 3. **R2 Keys (Cloudflare)**
 
 ```bash
 # Cloudflare dashboard → R2 → API Tokens
@@ -408,56 +381,29 @@ git push origin --force --all
 
 ---
 
-## 🔧 Validation Script
+## 🔧 Environment Validation Example
 
-Create `apps/src/config/env.validation.ts`:
+You can validate environment variables on startup using Zod:
 
 ```typescript
 import { z } from 'zod';
 
 const envSchema = z.object({
-  // Node
   NODE_ENV: z.enum(['development', 'production', 'test']),
-  PORT: z.string().transform(Number).pipe(z.number().min(1000)),
-
-  // Database
   DATABASE_URL: z.string().url(),
   DIRECT_URL: z.string().url(),
-
-  // Web Push
   VAPID_PUBLIC_KEY: z.string().min(80),
   VAPID_PRIVATE_KEY: z.string().min(40),
   VAPID_SUBJECT: z.string().email().or(z.string().startsWith('mailto:')),
-
-  // Storage
   R2_ACCOUNT_ID: z.string().min(1),
   R2_ACCESS_KEY_ID: z.string().min(1),
   R2_SECRET_ACCESS_KEY: z.string().min(1),
   R2_BUCKET_NAME: z.string().min(1),
-
-  // Security
-  JWT_SECRET: z.string().min(32),
-  SESSION_SECRET: z.string().min(32).optional(),
-
-  // Optional
-  CORS_ORIGIN: z.string().url().optional(),
-  SENTRY_DSN: z.string().url().optional(),
 });
 
-export type Env = z.infer<typeof envSchema>;
-
-export function validateEnv(): Env {
-  try {
-    return envSchema.parse(process.env);
-  } catch (error) {
-    console.error('❌ Invalid environment variables:');
-    console.error(error);
-    process.exit(1);
-  }
+export function validateEnv() {
+  return envSchema.parse(process.env);
 }
-
-// Usage in main.ts
-const env = validateEnv();
 ```
 
 ---

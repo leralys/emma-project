@@ -115,6 +115,32 @@ pnpm typecheck
 
 ---
 
+## Database Commands
+
+### Prisma Operations
+
+```bash
+# Generate Prisma Client
+pnpm db:generate
+
+# Push schema to database (development)
+pnpm db:push
+
+# Create migration (production)
+pnpm db:migrate
+
+# Deploy migrations (production)
+pnpm db:migrate:deploy
+
+# Open Prisma Studio (database GUI)
+pnpm db:studio
+
+# Seed database with example data
+pnpm db:seed
+```
+
+---
+
 ## Utility Commands
 
 ### View Project Graph
@@ -133,6 +159,14 @@ pnpm clean
 
 Removes `dist`, `node_modules`, and Nx cache. Useful for troubleshooting.
 
+### Generate VAPID Keys
+
+```bash
+pnpm generate:vapid
+```
+
+Generates VAPID keys for web push notifications.
+
 ---
 
 ## Quick Reference Table
@@ -150,6 +184,10 @@ Removes `dist`, `node_modules`, and Nx cache. Useful for troubleshooting.
 | `pnpm lint`           | 🔍 Lint all code            |
 | `pnpm format`         | 💅 Format all code          |
 | `pnpm typecheck`      | 🔤 Type check TypeScript    |
+| `pnpm db:generate`    | 🗄️ Generate Prisma Client   |
+| `pnpm db:studio`      | 📊 Open database GUI        |
+| `pnpm db:seed`        | 🌱 Seed database            |
+| `pnpm generate:vapid` | 🔑 Generate VAPID keys      |
 | `pnpm graph`          | 📊 View project graph       |
 | `pnpm clean`          | 🧹 Clean build artifacts    |
 

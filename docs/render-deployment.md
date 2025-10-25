@@ -98,7 +98,7 @@ git push -u origin main
    - **Branch:** `main`
    - **Root Directory:** (leave empty)
    - **Environment:** Node
-   - **Build Command:** `pnpm install && pnpm db:generate && pnpm build:backend`
+   - **Build Command:** `pnpm install && pnpm db:migrate:deploy && pnpm db:generate && pnpm build:backend`
    - **Start Command:** `node dist/apps/main.js`
    - **Plan:** Free
 5. Add environment variables (see list above)
@@ -130,7 +130,7 @@ services:
   - type: web
     name: emma-backend
     env: node
-    buildCommand: pnpm install && pnpm db:generate && pnpm build:backend
+    buildCommand: pnpm install && pnpm db:migrate:deploy && pnpm db:generate && pnpm build:backend
     startCommand: node dist/apps/main.js
     healthCheckPath: /health
 ```
@@ -138,9 +138,12 @@ services:
 **Why these commands?**
 
 - `pnpm install` - Install dependencies
+- `pnpm db:migrate:deploy` - Apply pending database migrations
 - `pnpm db:generate` - Generate Prisma Client
 - `pnpm build:backend` - Build NestJS app
 - `node dist/apps/main.js` - Start the server
+
+**Important:** Migrations are committed to git in your feature branch, then automatically applied when deployed to production.
 
 ### Frontend Configuration
 
@@ -230,17 +233,40 @@ You can also paste all variables at once:
 
 ## 📊 Database Migrations
 
-### Run Migrations on Deploy
+### How Migrations Work
 
-Add to build command:
+**Development (Feature Branch):**
+
+1. Create migration locally: `pnpm db:migrate`
+2. Test changes
+3. Commit migration files to git
+4. Push to remote
+
+**Production (Render Deploy):**
+
+1. Merge PR to main
+2. Render detects push and runs build command
+3. `pnpm db:migrate:deploy` applies pending migrations
+4. App builds and deploys
+
+### Build Command
+
+The `render.yaml` includes migrations in the build:
 
 ```bash
-pnpm install && pnpm db:generate && pnpm db:migrate:deploy && pnpm build:backend
+pnpm install && pnpm db:migrate:deploy && pnpm db:generate && pnpm build:backend
 ```
 
-This runs migrations before starting the server.
+**Order matters:**
 
-### Manual Migration
+1. Install dependencies
+2. Apply migrations (uses `DIRECT_URL`)
+3. Generate Prisma Client
+4. Build app
+
+### Manual Migration (if needed)
+
+If you need to run migrations manually:
 
 1. Go to **Shell** tab in Render dashboard
 2. Run:
@@ -248,6 +274,8 @@ This runs migrations before starting the server.
 ```bash
 pnpm db:migrate:deploy
 ```
+
+See [Database Setup Guide](database-setup.md) for detailed migration workflow.
 
 ---
 
