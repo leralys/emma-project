@@ -18,7 +18,7 @@ pnpm exec lint-staged
 
 ### 3. Files Are Processed
 
-**For `.{js,jsx,ts,tsx,json,css,scss,md}` files:**
+**For `.{js,jsx,ts,tsx,json,css,scss,md,prisma}` files:**
 
 ```bash
 prettier --write <files>
@@ -26,6 +26,7 @@ prettier --write <files>
 
 - Formats code
 - Organizes imports (via prettier-plugin-organize-imports)
+- Formats Prisma schema files (via prettier-plugin-prisma)
 - Sorts Tailwind classes (via prettier-plugin-tailwindcss)
 
 **For `.{js,jsx,ts,tsx}` files:**
@@ -125,7 +126,7 @@ pnpm exec lint-staged  # ~0.5-2 seconds
 ```json
 {
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,css,scss,md}": ["prettier --write"],
+    "*.{js,jsx,ts,tsx,json,css,scss,md,prisma}": ["prettier --write"],
     "*.{js,jsx,ts,tsx}": ["eslint --fix"]
   }
 }
@@ -150,7 +151,7 @@ pnpm exec lint-staged
 ```json
 {
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,css,scss,md}": ["prettier --write"],
+    "*.{js,jsx,ts,tsx,json,css,scss,md,prisma}": ["prettier --write"],
     "*.{ts,tsx}": ["bash -c 'tsc --noEmit'", "eslint --fix"]
   }
 }
@@ -161,7 +162,7 @@ pnpm exec lint-staged
 ```json
 {
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,css,scss,md}": ["prettier --write"],
+    "*.{js,jsx,ts,tsx,json,css,scss,md,prisma}": ["prettier --write"],
     "*.{js,jsx,ts,tsx}": ["eslint --fix", "bash -c 'pnpm nx affected -t test --files=$1'"]
   }
 }
@@ -271,7 +272,7 @@ This is normal! lint-staged automatically re-stages the formatted files.
 Run this to see what will be processed:
 
 ```bash
-git diff --cached --name-only | grep -E '\.(js|jsx|ts|tsx|json|css|scss|md)$'
+git diff --cached --name-only | grep -E '\.(js|jsx|ts|tsx|json|css|scss|md|prisma)$'
 ```
 
 ---

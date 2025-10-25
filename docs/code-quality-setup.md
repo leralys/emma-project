@@ -6,6 +6,7 @@
 
 1. **prettier-plugin-organize-imports** - Automatically organizes and sorts imports
 2. **prettier-plugin-tailwindcss** - Sorts Tailwind CSS classes in recommended order
+3. **prettier-plugin-prisma** - Formats Prisma schema files
 
 ### Configuration (`.prettierrc`)
 
@@ -16,9 +17,15 @@
   "tabWidth": 2,
   "trailingComma": "es5",
   "printWidth": 100,
-  "plugins": ["prettier-plugin-organize-imports", "prettier-plugin-tailwindcss"]
+  "plugins": [
+    "prettier-plugin-organize-imports",
+    "prettier-plugin-prisma",
+    "prettier-plugin-tailwindcss"
+  ]
 }
 ```
+
+**Note:** Plugin order matters! `prettier-plugin-tailwindcss` must be last.
 
 ### Features
 
@@ -45,6 +52,20 @@ import { ApiResponse } from '@emma-project/types';
 
 // After (automatically sorted by Tailwind's recommended order)
 <div className="flex rounded-lg bg-blue-500 p-4 text-white">
+```
+
+**Format Prisma Schema:**
+
+```prisma
+// Automatically formats on save or commit
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
 ```
 
 ### Usage
@@ -96,7 +117,7 @@ Configuration in `package.json`:
 ```json
 {
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,css,scss,md}": ["prettier --write"],
+    "*.{js,jsx,ts,tsx,json,css,scss,md,prisma}": ["prettier --write"],
     "*.{js,jsx,ts,tsx}": ["eslint --fix"]
   }
 }
@@ -105,7 +126,7 @@ Configuration in `package.json`:
 **What happens on commit:**
 
 1. Only staged files matching the patterns are processed
-2. Prettier formats them
+2. Prettier formats them (including `.prisma` files)
 3. ESLint fixes any auto-fixable issues
 4. Fixed files are automatically staged
 
@@ -339,4 +360,5 @@ This will:
 | `lint-staged`                      | ^16.2.6 | Run commands on staged files |
 | `prettier`                         | ^3.6.2  | Code formatter               |
 | `prettier-plugin-organize-imports` | ^4.3.0  | Auto-organize imports        |
+| `prettier-plugin-prisma`           | ^5.0.0  | Format Prisma schema files   |
 | `prettier-plugin-tailwindcss`      | ^0.7.1  | Sort Tailwind classes        |

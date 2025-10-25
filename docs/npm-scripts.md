@@ -123,13 +123,13 @@ pnpm typecheck
 # Generate Prisma Client
 pnpm db:generate
 
-# Push schema to database (development)
+# Push schema to database (prototyping only)
 pnpm db:push
 
-# Create migration (production)
+# Create migration (use on Neon dev branch)
 pnpm db:migrate
 
-# Deploy migrations (production)
+# Deploy migrations (automatic on production deploy)
 pnpm db:migrate:deploy
 
 # Open Prisma Studio (database GUI)
@@ -138,6 +138,8 @@ pnpm db:studio
 # Seed database with example data
 pnpm db:seed
 ```
+
+**Note:** Always test migrations on a Neon development branch before deploying to production. See [Database Setup Guide](database-setup.md) for the complete migration workflow.
 
 ---
 

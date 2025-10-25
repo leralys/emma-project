@@ -17,7 +17,7 @@ git commit -m "feat: add new feature"
 **What happens:**
 
 - ✅ Pre-commit hook runs
-- ✅ lint-staged formats and lints staged files
+- ✅ lint-staged formats and lints staged files (JS/TS/CSS/MD/Prisma)
 - ✅ Commit is created if all checks pass
 
 ### Without Hooks
@@ -202,7 +202,7 @@ git commit -m "feat: add other"
 git diff --cached --name-only
 
 # See files that match lint-staged patterns
-git diff --cached --name-only | grep -E '\.(js|jsx|ts|tsx)$'
+git diff --cached --name-only | grep -E '\.(js|jsx|ts|tsx|prisma)$'
 ```
 
 ### Test lint-staged Manually

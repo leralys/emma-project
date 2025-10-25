@@ -237,17 +237,21 @@ You can also paste all variables at once:
 
 **Development (Feature Branch):**
 
-1. Create migration locally: `pnpm db:migrate`
-2. Test changes
-3. Commit migration files to git
-4. Push to remote
+1. Create Neon development branch database
+2. Update local `.env` with dev branch connection strings
+3. Create migration locally: `pnpm db:migrate`
+4. Test changes on Neon dev branch
+5. Commit migration files to git
+6. Push to remote
 
 **Production (Render Deploy):**
 
 1. Merge PR to main
 2. Render detects push and runs build command
-3. `pnpm db:migrate:deploy` applies pending migrations
+3. `pnpm db:migrate:deploy` applies pending migrations to production database
 4. App builds and deploys
+
+**Important:** Always test migrations on a Neon development branch before deploying to production.
 
 ### Build Command
 

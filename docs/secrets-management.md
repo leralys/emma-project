@@ -133,7 +133,7 @@ services:
     envVars:
       - key: DATABASE_URL
         sync: false # ← Manually set in dashboard (secret)
-      - key: JWT_SECRET
+      - key: VAPID_PRIVATE_KEY
         sync: false # ← Not in Git, only in Render
       - key: NODE_ENV
         value: production # ← Public, can be in Git

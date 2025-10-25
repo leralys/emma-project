@@ -14,7 +14,11 @@
 
 1. Go to [Neon Console](https://console.neon.tech)
 2. Create a new project
-3. Copy your connection strings
+3. Create a development branch (e.g., "development")
+   - Click **Branches** → **Create Branch**
+   - Name it "development" (or your preferred name)
+   - This gives you a safe environment to test migrations
+4. Copy the development branch connection strings for local development
 
 ### 2. Configure Environment Variables
 
@@ -27,6 +31,8 @@ DATABASE_URL="postgresql://user:password@host/database?sslmode=require"
 # Direct connection (for migrations)
 DIRECT_URL="postgresql://user:password@host/database?sslmode=require"
 ```
+
+**Important:** For development, use a Neon **development branch** database, not your production database. This allows you to test migrations safely before deploying to production.
 
 ### 3. Generate Prisma Client
 
@@ -124,30 +130,39 @@ const message = await db.message.create({
 When developing new features that require schema changes:
 
 ```bash
-# 1. Create a feature branch
+# 1. Create a Neon development branch database
+# In Neon Console: Create new branch from main (e.g., "dev-add-notifications")
+# Update your .env with the development branch connection strings
+
+# 2. Create a git feature branch
 git checkout -b feature/add-notifications
 
-# 2. Update schema
+# 3. Update schema
 # Edit prisma/schema.prisma
 
-# 3. Create migration (this applies to your dev database)
+# 4. Create migration (applies to your Neon dev branch database)
 pnpm db:migrate
 # Enter migration name: "add_notifications"
 
-# 4. Test your changes locally
+# 5. Test your changes locally
 pnpm db:seed  # Optional: seed test data
 pnpm dev      # Test the feature
 
-# 5. Commit migration files to git
+# 6. Commit migration files to git
 git add prisma/migrations/
 git add prisma/schema.prisma
 git commit -m "feat(db): add notifications table"
 
-# 6. Push to remote
+# 7. Push to remote
 git push origin feature/add-notifications
 ```
 
-**Important:** The migration is created and tested on your development branch, then committed to git.
+**Important:**
+
+- Always test migrations on a **Neon development branch** database first
+- The migration is created and tested on your development branch
+- Once tested, commit migration files to git
+- Neon branches allow you to test schema changes safely without affecting production
 
 ### Production Deployment
 
