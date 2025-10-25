@@ -68,7 +68,7 @@
     "zod": "^4.1.12"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,css,scss,md}": [
+    "*.{js,jsx,ts,tsx,json,css,scss,md,prisma}": [
       "prettier --write"
     ],
     "*.{js,jsx,ts,tsx}": [
@@ -117,6 +117,7 @@
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.3.0",
+    "prettier-plugin-prisma": "^5.0.0",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "prisma": "^6.18.0",
     "tailwindcss": "^4.1.16",
