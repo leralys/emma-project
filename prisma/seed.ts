@@ -7,15 +7,18 @@ async function main() {
   console.log('🌱 Seeding database...');
 
   // Clear existing data (in reverse order of dependencies)
-  await prisma.messageReadReceipt.deleteMany();
-  await prisma.message.deleteMany();
-  await prisma.threadParticipant.deleteMany();
-  await prisma.thread.deleteMany();
-  await prisma.device.deleteMany();
-  await prisma.userRole.deleteMany();
-  await prisma.user.deleteMany();
-
-  console.log('🧹 Cleared existing data');
+  try {
+    await prisma.messageReadReceipt.deleteMany();
+    await prisma.message.deleteMany();
+    await prisma.threadParticipant.deleteMany();
+    await prisma.thread.deleteMany();
+    await prisma.device.deleteMany();
+    await prisma.userRole.deleteMany();
+    await prisma.user.deleteMany();
+    console.log('🧹 Cleared existing data');
+  } catch (error) {
+    console.log('📝 Database is empty, skipping cleanup');
+  }
 
   // Create admin user with password
   const adminPassword = await argon2.hash('admin123');
@@ -71,6 +74,7 @@ async function main() {
     data: {
       userId: alice.id,
       keyHash: 'alice-device-key-hash-1',
+      timezone: 'America/New_York', // Alice is in New York (EST/EDT)
       pushEndpoint: 'https://push.example.com/alice',
       pushP256dh: 'alice-p256dh-key',
       pushAuth: 'alice-auth-secret',
@@ -81,6 +85,7 @@ async function main() {
     data: {
       userId: bob.id,
       keyHash: 'bob-device-key-hash-1',
+      timezone: 'Europe/London', // Bob is in London (GMT/BST)
       pushEndpoint: 'https://push.example.com/bob',
       pushP256dh: 'bob-p256dh-key',
       pushAuth: 'bob-auth-secret',
@@ -141,6 +146,7 @@ async function main() {
     data: {
       messageId: message1.id,
       userId: bob.id,
+      readAtUTC: new Date(), // Bob read Alice's message
     },
   });
 
@@ -148,6 +154,7 @@ async function main() {
     data: {
       messageId: message2.id,
       userId: alice.id,
+      readAtUTC: new Date(), // Alice read Bob's message
     },
   });
 

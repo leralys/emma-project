@@ -50,6 +50,7 @@ model Device {
   userId       String
   keyHash      String   @unique
   revoked      Boolean  @default(false)
+  timezone     String?  @default("UTC") // IANA timezone (e.g., "America/New_York", "Europe/London")
   pushEndpoint String?
   pushP256dh   String?
   pushAuth     String?
@@ -109,7 +110,7 @@ model Message {
 model MessageReadReceipt {
   messageId String
   userId    String
-  readAt    DateTime @default(now())
+  readAtUTC DateTime @default(now()) // Auto-set to current UTC time when receipt is created
 
   message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)

@@ -26,6 +26,7 @@ CREATE TABLE "devices" (
     "userId" TEXT NOT NULL,
     "keyHash" TEXT NOT NULL,
     "revoked" BOOLEAN NOT NULL DEFAULT false,
+    "timezone" TEXT DEFAULT 'UTC',
     "pushEndpoint" TEXT,
     "pushP256dh" TEXT,
     "pushAuth" TEXT,
@@ -73,7 +74,7 @@ CREATE TABLE "messages" (
 CREATE TABLE "message_read_receipts" (
     "messageId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "readAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "readAtUTC" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "message_read_receipts_pkey" PRIMARY KEY ("messageId","userId")
 );

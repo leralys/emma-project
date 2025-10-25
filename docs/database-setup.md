@@ -43,12 +43,15 @@ pnpm db:generate
 ### 4. Push Schema to Database
 
 ```bash
-# Development: Push schema without migrations
-pnpm db:push
-
-# Production: Create migration
+# Option 1 (Recommended for development): Create and apply migration
 pnpm db:migrate
+# Enter a name for the migration when prompted
+
+# Option 2 (Quick prototyping): Push schema without migration
+pnpm db:push
 ```
+
+**Note:** `db:migrate:deploy` is only for production deployments and is automatically run by Render.
 
 ### 5. Seed Database
 
@@ -64,6 +67,25 @@ This creates:
 - 2 threads (1 direct chat, 1 group)
 - 3 messages (2 delivered, 1 scheduled)
 - 2 read receipts
+
+---
+
+## 🔄 Starting Fresh (Clean Database)
+
+If you've cleaned your development database and want to start over:
+
+```bash
+# Step 1: Generate Prisma Client
+pnpm db:generate
+
+# Step 2: Create tables in database
+pnpm db:push
+# OR (if you want to create a migration)
+pnpm db:migrate
+
+# Step 3: Seed with example data
+pnpm db:seed
+```
 
 ---
 
@@ -185,12 +207,13 @@ git push origin main
 
 ### Quick Reference
 
-| Command        | When to Use                      | What It Does                     |
-| -------------- | -------------------------------- | -------------------------------- |
-| `db:push`      | Prototyping (dev only)           | Push schema without migration    |
-| `db:migrate`   | Feature development              | Create migration + apply locally |
-| `db:generate`  | After pulling changes / in build | Generate Prisma Client           |
-| Build (Render) | Automatic on deploy              | Applies pending migrations       |
+| Command             | When to Use                      | What It Does                              |
+| ------------------- | -------------------------------- | ----------------------------------------- |
+| `db:generate`       | After schema/pull changes        | Generate Prisma Client (TypeScript types) |
+| `db:push`           | Quick prototyping (dev only)     | Push schema without creating migration    |
+| `db:migrate`        | Feature development              | Create migration + apply to dev DB        |
+| `db:migrate:deploy` | Production only (auto on Render) | Apply pending migrations to production    |
+| `db:seed`           | After creating/resetting tables  | Populate database with example data       |
 
 ### Viewing Data
 
