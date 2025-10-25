@@ -143,7 +143,7 @@ Copy the example environment file:
 cp .env.example .env
 ```
 
-Or create `.env` manually with your database connection string.
+This will create a `.env` file with all required and optional environment variables.
 
 ### 2. Configure Database Connection
 

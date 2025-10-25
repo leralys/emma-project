@@ -55,6 +55,7 @@ emma-project/
 - **TypeScript** - Type-safe JavaScript
 - **Prisma** - Next-generation ORM
 - **Neon** - Serverless Postgres database
+- **Passport & JWT** - Authentication & authorization
 - **Argon2** - Secure password hashing
 - **Web Push** - Push notifications
 - **Cloudflare R2** - Object storage (S3-compatible)
