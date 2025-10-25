@@ -84,6 +84,8 @@ temp/
 .pnpm-store/
 .yarn/
 .npm/
+package-lock.json
+yarn.lock
 
 # Nx
 .nx/workspace-data
