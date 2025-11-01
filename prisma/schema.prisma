@@ -31,6 +31,7 @@ model User {
   participants ThreadParticipant[]
   messages     Message[]            @relation("UserMessages")
   readReceipts MessageReadReceipt[]
+  claimCodes   DeviceClaimCode[]
 
   @@map("users")
 }
@@ -59,6 +60,22 @@ model Device {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("devices")
+}
+
+model DeviceClaimCode {
+  code      String    @id // Short code like "XK7P-M9Q2"
+  userId    String // User this device will belong to
+  expiresAt DateTime
+  claimed   Boolean   @default(false)
+  claimedAt DateTime?
+  deviceId  String? // Device that claimed this code (for audit trail)
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([code, claimed])
+  @@index([userId])
+  @@map("device_claim_codes")
 }
 
 model Thread {
