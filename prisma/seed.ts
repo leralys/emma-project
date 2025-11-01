@@ -13,10 +13,11 @@ async function main() {
     await prisma.threadParticipant.deleteMany();
     await prisma.thread.deleteMany();
     await prisma.device.deleteMany();
+    await prisma.deviceClaimCode.deleteMany();
     await prisma.userRole.deleteMany();
     await prisma.user.deleteMany();
     console.log('🧹 Cleared existing data');
-  } catch (error) {
+  } catch {
     console.log('📝 Database is empty, skipping cleanup');
   }
 
