@@ -1,13 +1,17 @@
-// User types
+import { Role } from '@prisma/client';
+
 export interface User {
   id: string;
-  email: string;
-  name: string;
+  name: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type UserWithRoles = User & { roles: UserRole[] };
+export interface AuthenticatedUser {
+  id: string;
+  name: string;
+  roles: Role[];
+}
 
 export interface CreateUserDto {
   email: string;
@@ -38,12 +42,6 @@ export interface PaginatedResponse<T> {
 
 // Common types
 export type ID = string | number;
-
-export enum UserRole {
-  ADMIN = 'admin',
-  USER = 'user',
-  GUEST = 'guest',
-}
 
 export interface Timestamps {
   createdAt: Date;

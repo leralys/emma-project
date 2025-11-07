@@ -1,8 +1,7 @@
-import { UserWithRoles } from '@emma-project/types';
+import { AuthenticatedUser } from '@emma-project/types';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Role } from '@prisma/client';
 import * as crypto from 'crypto';
 import { type StringValue } from 'ms';
 
@@ -16,11 +15,11 @@ export class AuthService {
   /**
    * Issue access and refresh tokens for admin
    */
-  issueTokens(user: UserWithRoles) {
+  issueTokens(user: AuthenticatedUser) {
     const accessPayload = {
       sub: user.id,
-      roles: user.roles,
       name: user.name,
+      roles: user.roles,
     };
 
     const refreshPayload = {
@@ -48,7 +47,7 @@ export class AuthService {
   /**
    * Refresh tokens using refresh token
    */
-  async refreshFromToken(refreshToken: string) {
+  async refreshFromToken(refreshToken: string, user: AuthenticatedUser) {
     try {
       const payload = this.jwtService.verify(refreshToken);
 
@@ -58,11 +57,10 @@ export class AuthService {
 
       // Issue new tokens
       return this.issueTokens({
-        id: payload.sub as string,
-        roles: [Role.admin],
-        name: 'Admin',
-        email: 'admin@example.com',
-      } as UserWithRoles);
+        id: user.id,
+        name: user.name,
+        roles: user.roles,
+      });
     } catch {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }

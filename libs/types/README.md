@@ -23,12 +23,20 @@ create(@Body() createUserDto: CreateUserDto): ApiResponse<User> {
 ### In Frontend (React)
 
 ```typescript
-import { User, ApiResponse, UserRole } from '@emma-project/types';
+import { User, ApiResponse, AuthenticatedUser } from '@emma-project/types';
+import { Role } from '@prisma/client';
 
 // Use in components
 interface UserListProps {
   users: User[];
 }
+
+// Create minimal user objects
+const createUser = (id: string, name: string, roles: Role[]): AuthenticatedUser => ({
+  id,
+  name,
+  roles,
+});
 
 // Use with API calls
 const fetchUser = async (id: string): Promise<ApiResponse<User>> => {
@@ -41,10 +49,10 @@ const fetchUser = async (id: string): Promise<ApiResponse<User>> => {
 
 ### User Types
 
-- `User` - User entity interface
+- `User` - User entity interface (matches Prisma User model)
+- `AuthenticatedUser` - Authenticated user type with id, name, and roles for object creation
 - `CreateUserDto` - Data transfer object for creating users
 - `UpdateUserDto` - Data transfer object for updating users
-- `UserRole` - Enum for user roles (ADMIN, USER, GUEST)
 
 ### API Response Types
 
