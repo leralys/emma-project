@@ -1,9 +1,12 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import { Request } from 'express';
 
 @Injectable()
 export class CsrfGuard implements CanActivate {
+  constructor(private config: ConfigService) {}
+
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest<Request>();
 
@@ -21,10 +24,8 @@ export class CsrfGuard implements CanActivate {
     }
 
     // Calculate expected CSRF token
-    const expectedCsrf = crypto
-      .createHmac('sha256', process.env.CSRF_SECRET)
-      .update(accessToken)
-      .digest('hex');
+    const csrfSecret = this.config.getOrThrow<string>('csrf.secret');
+    const expectedCsrf = crypto.createHmac('sha256', csrfSecret).update(accessToken).digest('hex');
 
     if (expectedCsrf !== providedCsrf) {
       throw new ForbiddenException('CSRF token invalid');

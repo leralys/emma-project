@@ -7,6 +7,8 @@ export interface User {
   updatedAt: Date;
 }
 
+export type UserWithRoles = User & { roles: UserRole[] };
+
 export interface CreateUserDto {
   email: string;
   name: string;
