@@ -35,7 +35,7 @@ const envSchema = z.object({
   // Admin Authentication
   ADMIN_PASSWORD_HASH: z
     .string()
-    .startsWith('$argon2', 'ADMIN_PASSWORD_HASH must be an argon2 hash')
+    .refine((val) => val.startsWith('$argon2'), 'ADMIN_PASSWORD_HASH must be an argon2 hash')
     .describe('Argon2 hash of admin password'),
 
   // Database
@@ -76,19 +76,6 @@ const envSchema = z.object({
     }, 'FRONTEND_URL must be a valid URL')
     .default('http://localhost:4200')
     .describe('Frontend URL for CORS configuration'),
-
-  // Email Service
-  RESEND_API_KEY: z
-    .string()
-    .startsWith('re_', 'RESEND_API_KEY must start with re_')
-    .describe('Resend API key for sending emails'),
-
-  RESEND_FROM_EMAIL: z
-    .string()
-    .refine((val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
-      message: 'RESEND_FROM_EMAIL must be a valid email address',
-    })
-    .describe('Email address to send emails from'),
 
   // Optional: Server Port
   PORT: z.coerce.number().int().positive().default(3000).describe('Server port number'),

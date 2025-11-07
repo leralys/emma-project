@@ -1,8 +1,9 @@
 import { AuthenticatedUser } from '@emma-project/types';
 import { Controller, Get, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { LoginAdminDto } from './dto/login-admin.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @ApiTags('Authentication')
@@ -17,6 +18,7 @@ export class AuthController {
   @Post('login-admin')
   @UseGuards(AuthGuard('local'))
   @ApiOperation({ summary: 'Admin login' })
+  @ApiBody({ type: LoginAdminDto })
   @ApiResponse({ status: 200, description: 'Returns access token, refresh token, and CSRF token' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   async loginAdmin(@Req() req: Request & { user: AuthenticatedUser }) {

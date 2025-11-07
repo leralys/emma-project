@@ -22,8 +22,11 @@
  * # Output:
  * # 🔐 Hashing password with Argon2...
  * # ✅ Password hashed successfully!
- * # 📋 Hashed password:
+ * # 📋 Raw hash:
  * # $argon2id$v=19$m=65536,t=3,p=4$hVb+KSi3aDPoYsAWDuJQxg$X4vCvK4t1RCRaaK4k+QWRiG8QM1emPfZqM0CeZCl9Bk
+ * #
+ * # 📝 For .env file (copy this line):
+ * # ADMIN_PASSWORD_HASH=\$argon2id\$v=19\$m=65536,t=3,p=4\$hVb+KSi3aDPoYsAWDuJQxg\$X4vCvK4t1RCRaaK4k+QWRiG8QM1emPfZqM0CeZCl9Bk
  * ```
  *
  * @hashStructure
@@ -51,6 +54,7 @@
  * - Store hashed passwords in environment variables or secure database
  * - Use strong passwords with mixed case, numbers, and special characters
  * - Each hash is unique even for the same password (thanks to salt)
+ * - Always use the escaped version in .env files to prevent shell variable expansion
  *
  * @see {@link https://www.npmjs.com/package/argon2|argon2 package}
  * @see {@link https://en.wikipedia.org/wiki/Argon2|Argon2 Algorithm}
@@ -73,10 +77,18 @@ argon2
   .hash(password)
   .then((hash) => {
     console.log('✅ Password hashed successfully!\n');
-    console.log('📋 Hashed password:');
+    console.log('📋 Raw hash:');
     console.log(hash);
-    console.log('\n💡 Use case:');
-    console.log('   • Add to .env as ADMIN_PASSWORD_HASH');
+
+    // Escape dollar signs for .env file usage
+    const escapedHash = hash.replace(/\$/g, '\\$');
+
+    console.log('\n📝 For .env file (copy this line):');
+    console.log(`ADMIN_PASSWORD_HASH=${escapedHash}`);
+
+    console.log('\n💡 Usage:');
+    console.log('   • Copy the escaped version above to your .env file');
+    console.log('   • The escaping prevents shell variable expansion');
   })
   .catch((error) => {
     console.error('❌ Error hashing password:', error);

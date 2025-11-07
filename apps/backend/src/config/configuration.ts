@@ -24,9 +24,4 @@ export default () => ({
   frontend: {
     url: process.env.FRONTEND_URL || 'http://localhost:4200',
   },
-
-  email: {
-    resendApiKey: process.env.RESEND_API_KEY,
-    resendFromEmail: process.env.RESEND_FROM_EMAIL,
-  },
 });
