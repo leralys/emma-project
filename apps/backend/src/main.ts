@@ -1,3 +1,28 @@
+// Load environment variables FIRST, before any other imports
+import { config } from 'dotenv';
+import { resolve } from 'path';
+
+// Try multiple possible paths for the .env file
+const possibleEnvPaths = [
+  resolve(__dirname, '../../../.env'), // From dist/apps/backend/main.js
+  resolve(__dirname, '../../.env'), // Alternative path
+  resolve(process.cwd(), '.env'), // From project root
+];
+
+let envLoaded = false;
+for (const envPath of possibleEnvPaths) {
+  const result = config({ path: envPath });
+  if (!result.error) {
+    envLoaded = true;
+    break;
+  }
+}
+
+if (!envLoaded) {
+  console.error('⚠️  Could not load .env file from any location');
+}
+
+// Now import other modules
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';

@@ -12,7 +12,7 @@ import { AuthModule } from './auth/auth.module';
       isGlobal: true,
       load: [configuration],
       validate,
-      envFilePath: '.env',
+      envFilePath: '../../.env',
       cache: true,
     }),
     AuthModule,

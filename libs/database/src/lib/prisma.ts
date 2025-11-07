@@ -1,9 +1,8 @@
-import { Pool, PoolConfig, neonConfig } from '@neondatabase/serverless';
+import { neonConfig } from '@neondatabase/serverless';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import { PrismaClient } from '@prisma/client';
 import ws from 'ws';
 
-// Configure Neon to use WebSockets
 neonConfig.webSocketConstructor = ws;
 
 // Create a singleton instance
@@ -20,11 +19,20 @@ function getPrismaClient(): PrismaClient {
     throw new Error('DATABASE_URL environment variable is not set');
   }
 
-  const pool = new Pool({ connectionString });
-  const adapter = new PrismaNeon(pool as unknown as PoolConfig);
-  prisma = new PrismaClient({ adapter });
+  const adapter = new PrismaNeon({ connectionString });
+  prisma = new PrismaClient({
+    adapter,
+    log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
+  });
 
   return prisma;
 }
 
-export const db = getPrismaClient();
+// Export a lazy-initialized database client
+export const db = new Proxy({} as PrismaClient, {
+  get(target, prop: keyof PrismaClient) {
+    const client = getPrismaClient();
+    const value = client[prop];
+    return typeof value === 'function' ? value.bind(client) : value;
+  },
+});
