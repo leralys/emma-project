@@ -44,9 +44,6 @@ importers:
       '@prisma/client':
         specifier: ^6.18.0
         version: 6.18.0(prisma@6.18.0(typescript@5.9.3))(typescript@5.9.3)
-      '@types/cookie-parser':
-        specifier: ^1.4.10
-        version: 1.4.10(@types/express@4.17.23)
       '@types/passport-local':
         specifier: ^1.0.38
         version: 1.0.38
@@ -62,9 +59,6 @@ importers:
       class-validator:
         specifier: ^0.14.2
         version: 0.14.2
-      cookie-parser:
-        specifier: ^1.4.7
-        version: 1.4.7
       create-nx:
         specifier: 0.0.0
         version: 0.0.0(nx@22.0.1(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.5.29(@swc/helpers@0.5.17)))
@@ -86,6 +80,9 @@ importers:
       passport:
         specifier: ^0.7.0
         version: 0.7.0
+      passport-jwt:
+        specifier: ^4.0.1
+        version: 4.0.1
       passport-local:
         specifier: ^1.0.0
         version: 1.0.0
@@ -201,6 +198,9 @@ importers:
       '@types/node':
         specifier: 20.19.9
         version: 20.19.9
+      '@types/passport-jwt':
+        specifier: ^4.0.1
+        version: 4.0.1
       '@types/react':
         specifier: ^19.0.0
         version: 19.2.2
@@ -3135,11 +3135,6 @@ packages:
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
 
-  '@types/cookie-parser@1.4.10':
-    resolution: {integrity: sha512-B4xqkqfZ8Wek+rCOeRxsjMS9OgvzebEzzLYw7NHYuvzb7IdxOkI0ZHGgeEBX4PUM7QGVvNSK60T3OvWj3YfBRg==}
-    peerDependencies:
-      '@types/express': '*'
-
   '@types/deep-eql@4.0.2':
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
 
@@ -3212,6 +3207,9 @@ packages:
 
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
+
+  '@types/passport-jwt@4.0.1':
+    resolution: {integrity: sha512-Y0Ykz6nWP4jpxgEUYq8NoVZeCQPo1ZndJLfapI249g1jHChvRfZRO/LS3tqu26YgAS/laI1qx98sYGz0IalRXQ==}
 
   '@types/passport-local@1.0.38':
     resolution: {integrity: sha512-nsrW4A963lYE7lNTv9cr5WmiUD1ibYJvWrpE13oxApFsRt77b0RdtZvKbCdNIY4v/QZ6TRQWaDDEwV1kCTmcXg==}
@@ -4157,10 +4155,6 @@ packages:
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
-
-  cookie-parser@1.4.7:
-    resolution: {integrity: sha512-nGUvgXnotP3BsjiLX2ypbQnWoGUPIIfHQNZkkC668ntrzGWEZVW70HDEB1qnNGMicPje6EttlIgzo51YSwNQGw==}
-    engines: {node: '>= 0.8.0'}
 
   cookie-signature@1.0.6:
     resolution: {integrity: sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ==}
@@ -6576,6 +6570,9 @@ packages:
   parseurl@1.3.3:
     resolution: {integrity: sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==}
     engines: {node: '>= 0.8'}
+
+  passport-jwt@4.0.1:
+    resolution: {integrity: sha512-UCKMDYhNuGOBE9/9Ycuoyh7vP6jpeTp/+sfMJl7nLff/t6dps+iaeE0hhNkKN8/HZHcJ7lCdOyDxHdDoxoSvdQ==}
 
   passport-local@1.0.0:
     resolution: {integrity: sha512-9wCE6qKznvf9mQYYbgJ3sVOHmCWoUNMVFoZzNoznmISbhnNNPhN9xfY3sLmScHMetEJeoY7CXwfhCe7argfQow==}
@@ -12677,10 +12674,6 @@ snapshots:
     dependencies:
       '@types/node': 20.19.9
 
-  '@types/cookie-parser@1.4.10(@types/express@4.17.23)':
-    dependencies:
-      '@types/express': 4.17.23
-
   '@types/deep-eql@4.0.2': {}
 
   '@types/eslint-scope@3.7.7':
@@ -12769,6 +12762,11 @@ snapshots:
       undici-types: 6.21.0
 
   '@types/parse-json@4.0.2': {}
+
+  '@types/passport-jwt@4.0.1':
+    dependencies:
+      '@types/jsonwebtoken': 9.0.10
+      '@types/passport-strategy': 0.2.38
 
   '@types/passport-local@1.0.38':
     dependencies:
@@ -13802,11 +13800,6 @@ snapshots:
   content-type@1.0.5: {}
 
   convert-source-map@2.0.0: {}
-
-  cookie-parser@1.4.7:
-    dependencies:
-      cookie: 0.7.2
-      cookie-signature: 1.0.6
 
   cookie-signature@1.0.6: {}
 
@@ -16640,6 +16633,11 @@ snapshots:
       entities: 6.0.1
 
   parseurl@1.3.3: {}
+
+  passport-jwt@4.0.1:
+    dependencies:
+      jsonwebtoken: 9.0.2
+      passport-strategy: 1.0.0
 
   passport-local@1.0.0:
     dependencies:
