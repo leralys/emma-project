@@ -1,36 +1,55 @@
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Middleware
+  // Security
   app.use(helmet());
-  app.enableCors();
-  app.use(cookieParser());
+
+  // CORS Configuration
+  app.enableCors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
+    credentials: false, // Not needed for Authorization header auth
+  });
+
+  // Global validation pipe
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // Strip properties not in DTO (security!)
+      transform: true, // Auto-transform payloads to DTO instances
+      forbidNonWhitelisted: true, // Throw error if extra properties sent
+    })
+  );
 
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
 
-  // Swagger Documentation
-  const config = new DocumentBuilder()
-    .setTitle('Emma Project API')
-    .setDescription('The Emma Project API documentation')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .addCookieAuth('jwt')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
-
   const port = process.env.PORT || 3000;
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  // Swagger Documentation (development only)
+  if (!isProduction) {
+    const config = new DocumentBuilder()
+      .setTitle('Emma Project API')
+      .setDescription('The Emma Project API documentation')
+      .setVersion('1.0')
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
+  }
+
   await app.listen(port);
   Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`);
-  Logger.log(`📚 Swagger docs available at: http://localhost:${port}/${globalPrefix}/docs`);
+
+  if (!isProduction) {
+    Logger.log(`📚 Swagger docs available at: http://localhost:${port}/${globalPrefix}/docs`);
+  }
 }
 
 bootstrap();
