@@ -16,11 +16,13 @@ const envSchema = z.object({
 
   JWT_ACCESS_EXPIRES: z
     .string()
+    .regex(/^\d+[smhd]$/, 'JWT_ACCESS_EXPIRES must be in format like "15m", "1h", "30d"')
     .default('15m')
     .describe('Access token expiration time (e.g., 15m, 1h)'),
 
   JWT_REFRESH_EXPIRES: z
     .string()
+    .regex(/^\d+[smhd]$/, 'JWT_REFRESH_EXPIRES must be in format like "30d", "7d"')
     .default('30d')
     .describe('Refresh token expiration time (e.g., 30d, 7d)'),
 
