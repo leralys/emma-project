@@ -1,6 +1,4 @@
 import { PrismaClient, Role } from '@prisma/client';
-import * as argon2 from 'argon2';
-
 const prisma = new PrismaClient();
 
 async function main() {
@@ -21,13 +19,11 @@ async function main() {
     console.log('📝 Database is empty, skipping cleanup');
   }
 
-  // Create admin user with password
-  const adminPassword = await argon2.hash('admin123');
+  // Create admin user (password is stored in ENV: ADMIN_PASSWORD_HASH)
   const admin = await prisma.user.create({
     data: {
       id: 'admin-user-id',
       name: 'Admin User',
-      passwordHash: adminPassword,
       roles: {
         create: [{ role: Role.admin }],
       },
@@ -202,9 +198,9 @@ async function main() {
   console.log('  - Threads: 2 (1 direct chat, 1 group)');
   console.log('  - Messages: 3 (2 delivered, 1 scheduled)');
   console.log('  - Read receipts: 2');
-  console.log('\n🔐 Admin credentials:');
-  console.log('  ID: admin-user-id');
-  console.log('  Password: admin123');
+  console.log('\n🔐 Admin login:');
+  console.log('  User ID: admin-user-id');
+  console.log('  Password: Set ADMIN_PASSWORD_HASH in .env (run: pnpm hash:password)');
 }
 
 main()
