@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@emma-project/types": ["libs/types/src/index.ts"]
+      "@emma-project/types": ["libs/types/src/index.ts"],
+      "@emma-project/database": ["libs/database/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

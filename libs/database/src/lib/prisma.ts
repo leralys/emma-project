@@ -1,4 +1,4 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
+import { Pool, PoolConfig, neonConfig } from '@neondatabase/serverless';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import { PrismaClient } from '@prisma/client';
 import ws from 'ws';
@@ -21,21 +21,10 @@ function getPrismaClient(): PrismaClient {
   }
 
   const pool = new Pool({ connectionString });
-  const adapter = new PrismaNeon(pool);
+  const adapter = new PrismaNeon(pool as unknown as PoolConfig);
   prisma = new PrismaClient({ adapter });
 
   return prisma;
 }
 
 export const db = getPrismaClient();
-
-// Optional: Add middleware for logging
-export function enableLogging() {
-  db.$use(async (params, next) => {
-    const before = Date.now();
-    const result = await next(params);
-    const after = Date.now();
-    console.log(`Query ${params.model}.${params.action} took ${after - before}ms`);
-    return result;
-  });
-}
