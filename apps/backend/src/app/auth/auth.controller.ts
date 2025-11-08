@@ -12,10 +12,10 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   /**
-   * POST /auth/login-admin
+   * POST /auth/admin/login
    * Admin login with password
    */
-  @Post('login-admin')
+  @Post('admin/login')
   @UseGuards(AuthGuard('local'))
   @ApiOperation({ summary: 'Admin login' })
   @ApiBody({ type: LoginAdminDto })
@@ -38,10 +38,10 @@ export class AuthController {
   }
 
   /**
-   * POST /auth/refresh
+   * POST /auth/admin/refresh
    * Refresh access token using refresh token sent in X-Refresh-Token header
    */
-  @Post('refresh')
+  @Post('admin/refresh')
   @ApiOperation({ summary: 'Refresh access token using X-Refresh-Token header' })
   @ApiResponse({ status: 200, description: 'Returns new tokens' })
   @ApiResponse({ status: 401, description: 'Invalid or expired refresh token' })
@@ -67,10 +67,10 @@ export class AuthController {
   }
 
   /**
-   * GET /auth/me
+   * GET /auth/admin/me
    * Get current admin user info
    */
-  @Get('me')
+  @Get('admin/me')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user' })

@@ -13,23 +13,11 @@ export interface AuthenticatedUser {
   roles: Role[];
 }
 
-export interface CreateUserDto {
-  email: string;
-  name: string;
-  password: string;
-}
-
-export interface UpdateUserDto {
-  email?: string;
-  name?: string;
-}
-
 // API Response types
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
   error?: string;
-  message?: string;
 }
 
 export interface PaginatedResponse<T> {
@@ -39,9 +27,6 @@ export interface PaginatedResponse<T> {
   pageSize: number;
   totalPages: number;
 }
-
-// Common types
-export type ID = string | number;
 
 export interface Timestamps {
   createdAt: Date;
