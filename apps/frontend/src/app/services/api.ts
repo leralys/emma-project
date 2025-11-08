@@ -1,6 +1,7 @@
 import { ApiResponse, PaginatedResponse } from '@emma-project/types';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { API_CONFIG } from '../config/api';
+import { authService } from './authService';
 
 // Create axios instance with base configuration
 const api: AxiosInstance = axios.create({
@@ -14,10 +15,16 @@ const api: AxiosInstance = axios.create({
 // Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const { accessToken, csrfToken } = authService.getStoredTokens();
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
+
+    if (csrfToken) {
+      config.headers['X-CSRF-Token'] = csrfToken;
+    }
+
     return config;
   },
   (error) => {
@@ -33,10 +40,8 @@ api.interceptors.response.use(
   (error) => {
     // Handle common errors
     if (error.response?.status === 401) {
-      // Clear token and redirect to main page
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('csrfToken');
+      // Clear tokens and redirect to main page
+      authService.clearTokens();
       window.location.href = '/';
     }
 
