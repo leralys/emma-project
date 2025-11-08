@@ -1,6 +1,6 @@
 import { AuthenticatedUser, LoginResponse } from '@emma-project/types';
 import { API_ENDPOINTS } from '../config/api';
-import api, { apiClient } from './api';
+import api from './api';
 
 export interface StoredTokens {
   accessToken: string | null;
@@ -11,29 +11,29 @@ export interface StoredTokens {
 // Pure API functions for TanStack Query
 export const authAPI = {
   login: async (password: string): Promise<LoginResponse> => {
-    const response = await apiClient.post<LoginResponse>(API_ENDPOINTS.adminLogin, {
+    const response = await api.post<LoginResponse>(API_ENDPOINTS.adminLogin, {
       password,
     });
 
-    if (!response.data.data) {
+    if (!response.data) {
       throw new Error('Invalid response from server');
     }
 
-    return response.data.data;
+    return response.data;
   },
 
   getMe: async (): Promise<AuthenticatedUser> => {
-    const response = await apiClient.get<AuthenticatedUser>(API_ENDPOINTS.adminGetMe);
+    const response = await api.get<AuthenticatedUser>(API_ENDPOINTS.adminGetMe);
 
-    if (!response.data.data) {
+    if (!response.data) {
       throw new Error('Failed to get user data');
     }
 
-    return response.data.data;
+    return response.data;
   },
 
   refreshTokens: async (refreshToken: string): Promise<LoginResponse> => {
-    const response = await api.post(
+    const response = await api.post<LoginResponse>(
       API_ENDPOINTS.adminRefresh,
       {},
       {
@@ -43,11 +43,11 @@ export const authAPI = {
       }
     );
 
-    if (!response.data.data) {
+    if (!response.data) {
       throw new Error('Failed to refresh tokens');
     }
 
-    return response.data.data;
+    return response.data;
   },
 };
 

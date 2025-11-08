@@ -1,7 +1,7 @@
 // API Configuration
 export const API_CONFIG = {
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
-  timeout: 10000,
+  timeout: import.meta.env.DEV ? 120000 : 10000, // 2 minutes in dev for debugging, 10s in prod
   retryAttempts: 3,
   retryDelay: 1000,
 } as const;
