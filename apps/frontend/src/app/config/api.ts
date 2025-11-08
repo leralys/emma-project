@@ -12,7 +12,7 @@ export const isProduction = import.meta.env.PROD;
 
 // API endpoints
 export const API_ENDPOINTS = {
-  adminLogin: 'auth/admin/login',
-  adminRefresh: 'auth/admin/refresh',
-  adminGetMe: 'auth/admin/me',
+  adminLogin: '/auth/admin/login',
+  adminRefresh: '/auth/admin/refresh',
+  adminGetMe: '/auth/admin/me',
 } as const;

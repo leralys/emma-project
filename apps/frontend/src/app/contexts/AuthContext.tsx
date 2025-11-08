@@ -26,16 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     queryFn: authAPI.getMe,
     enabled: authService.isAuthenticated(),
     staleTime: 10 * 60 * 1000, // 10 minutes
-    retry: (failureCount, error: unknown) => {
-      // Don't retry on 401 (unauthorized)
-      if (error && typeof error === 'object' && 'response' in error) {
-        const axiosError = error as { response?: { status?: number } };
-        if (axiosError.response?.status === 401) {
-          return false;
-        }
-      }
-      return failureCount < 2;
-    },
+    retry: false,
   });
 
   // Login mutation
