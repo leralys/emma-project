@@ -5,7 +5,7 @@
 ### Start All Applications
 
 ```bash
-pnpm dev
+pnpm dev              # Both frontend + backend
 # or
 pnpm dev:all
 ```
@@ -17,9 +17,11 @@ Runs both frontend and backend in parallel. This is the main command you'll use 
 ```bash
 # Frontend only (React + Vite)
 pnpm dev:frontend
+nx serve frontend     # Frontend only (direct Nx command)
 
 # Backend only (NestJS)
 pnpm dev:backend
+nx serve backend      # Backend only (direct Nx command)
 ```
 
 ---
@@ -29,7 +31,7 @@ pnpm dev:backend
 ### Build All Applications
 
 ```bash
-pnpm build
+pnpm build           # Both (convenience script)
 # or
 pnpm build:all
 ```
@@ -41,9 +43,11 @@ Builds both frontend and backend for production in parallel.
 ```bash
 # Frontend only
 pnpm build:frontend
+nx build frontend
 
 # Backend only
 pnpm build:backend
+nx build backend
 ```
 
 ---
@@ -63,9 +67,11 @@ Runs tests for all projects.
 ```bash
 # Frontend tests
 pnpm test:frontend
+nx test frontend
 
 # Backend tests
 pnpm test:backend
+nx test backend
 ```
 
 ### End-to-End Tests
@@ -76,6 +82,7 @@ pnpm e2e
 
 # Frontend E2E (Playwright)
 pnpm e2e:frontend
+nx e2e frontend-e2e
 
 # Backend E2E
 pnpm e2e:backend
@@ -93,7 +100,10 @@ pnpm lint
 
 # Lint specific project
 pnpm lint:frontend
+nx lint frontend
+
 pnpm lint:backend
+nx lint backend
 ```
 
 ### Formatting

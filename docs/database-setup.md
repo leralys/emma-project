@@ -61,9 +61,9 @@ pnpm db:seed
 
 This creates:
 
-- 1 admin user (ID: `admin-user-id`, Password: `admin123`)
+- 1 admin user (ID: `admin-user-id`, Password: Set via `ADMIN_PASSWORD_HASH` env var)
 - 3 regular users (Alice, Bob, Charlie)
-- 2 devices with push subscriptions
+- 2 devices with push subscriptions and timezones
 - 2 threads (1 direct chat, 1 group)
 - 3 messages (2 delivered, 1 scheduled)
 - 2 read receipts
@@ -91,14 +91,24 @@ pnpm db:seed
 
 ## 📜 Available Scripts
 
-| Script              | Command                 | Description                     |
-| ------------------- | ----------------------- | ------------------------------- |
-| `db:generate`       | `prisma generate`       | Generate Prisma Client          |
-| `db:push`           | `prisma db push`        | Push schema (no migrations)     |
-| `db:migrate`        | `prisma migrate dev`    | Create and apply migration      |
-| `db:migrate:deploy` | `prisma migrate deploy` | Deploy migrations (production)  |
-| `db:studio`         | `prisma studio`         | Open Prisma Studio (DB GUI)     |
-| `db:seed`           | `tsx prisma/seed.ts`    | Seed database with example data |
+| Script                   | Command                 | Description                     |
+| ------------------------ | ----------------------- | ------------------------------- |
+| `pnpm db:generate`       | `prisma generate`       | Generate Prisma Client          |
+| `pnpm db:push`           | `prisma db push`        | Push schema (no migrations)     |
+| `pnpm db:migrate`        | `prisma migrate dev`    | Create and apply migration      |
+| `pnpm db:migrate:deploy` | `prisma migrate deploy` | Deploy migrations (production)  |
+| `pnpm db:studio`         | `prisma studio`         | Open Prisma Studio (DB GUI)     |
+| `pnpm db:seed`           | `tsx prisma/seed.ts`    | Seed database with example data |
+
+**Alternative:** You can also run Prisma commands directly:
+
+```bash
+# Direct Prisma commands (equivalent to the pnpm scripts above)
+npx prisma generate
+npx prisma db push
+npx prisma migrate dev
+npx prisma studio
+```
 
 ---
 
@@ -110,7 +120,8 @@ Location: `prisma/schema.prisma`
 
 - **User** - Users with roles (admin/user)
 - **UserRole** - Role assignments (many-to-many)
-- **Device** - User devices with device keys and push subscriptions
+- **Device** - User devices with device keys, push subscriptions, and timezones
+- **DeviceClaimCode** - Short codes for device claiming/pairing
 - **Thread** - Conversation threads
 - **ThreadParticipant** - Thread members (many-to-many)
 - **Message** - Encrypted messages with scheduling support
@@ -120,14 +131,17 @@ Location: `prisma/schema.prisma`
 
 ## 🔧 Usage in Backend
 
-The Prisma Client is configured in `libs/database/src/lib/prisma.ts` and exported as `db`.
+The Prisma Client is configured in `libs/database/src/lib/prisma.ts` and exported as `db`. It uses the Neon serverless adapter for optimal performance.
 
 ```typescript
 import { db } from '@emma-project/database';
 
-// Query users
+// Query users with roles and devices
 const users = await db.user.findMany({
-  include: { roles: true, devices: true },
+  include: {
+    roles: true,
+    devices: true,
+  },
 });
 
 // Create a message
@@ -135,10 +149,19 @@ const message = await db.message.create({
   data: {
     threadId: 'thread-id',
     senderId: 'user-id',
-    ciphertext: Buffer.from('encrypted'),
-    iv: Buffer.from('iv'),
-    salt: Buffer.from('salt'),
+    ciphertext: Buffer.from('encrypted-content'),
+    iv: Buffer.from('initialization-vector'),
+    salt: Buffer.from('salt-value'),
     mediaUrls: [],
+  },
+});
+
+// Create a device claim code
+const claimCode = await db.deviceClaimCode.create({
+  data: {
+    code: 'XK7P-M9Q2',
+    userId: 'user-id',
+    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
   },
 });
 ```
