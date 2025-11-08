@@ -2,86 +2,63 @@ import { AuthenticatedUser } from '@emma-project/types';
 import { API_ENDPOINTS } from '../config/api';
 import api, { apiClient } from './api';
 
-interface LoginResponse {
+export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
   csrfToken: string;
 }
 
-interface StoredTokens {
+export interface StoredTokens {
   accessToken: string | null;
   refreshToken: string | null;
   csrfToken: string | null;
 }
 
-export const authService = {
-  // Admin login
+// Pure API functions for TanStack Query
+export const authAPI = {
   login: async (password: string): Promise<LoginResponse> => {
-    try {
-      const response = await apiClient.post<LoginResponse>(API_ENDPOINTS.adminLogin, {
-        password,
-      });
+    const response = await apiClient.post<LoginResponse>(API_ENDPOINTS.adminLogin, {
+      password,
+    });
 
-      if (!response.data.data) {
-        throw new Error('Invalid response from server');
-      }
-
-      return response.data.data;
-    } catch (error) {
-      console.error('Login error:', error);
-      throw new Error('Invalid password');
+    if (!response.data.data) {
+      throw new Error('Invalid response from server');
     }
+
+    return response.data.data;
   },
 
-  // Get current user
   getMe: async (): Promise<AuthenticatedUser> => {
-    try {
-      const response = await apiClient.get<AuthenticatedUser>(API_ENDPOINTS.adminGetMe);
+    const response = await apiClient.get<AuthenticatedUser>(API_ENDPOINTS.adminGetMe);
 
-      if (!response.data.data) {
-        throw new Error('Failed to get user data');
-      }
-
-      return response.data.data;
-    } catch (error) {
-      console.error('Get user error:', error);
-      throw error;
+    if (!response.data.data) {
+      throw new Error('Failed to get user data');
     }
+
+    return response.data.data;
   },
 
-  // Refresh tokens
-  refreshTokens: async (): Promise<LoginResponse> => {
-    try {
-      const tokens = authService.getStoredTokens();
-
-      if (!tokens.refreshToken) {
-        throw new Error('No refresh token available');
+  refreshTokens: async (refreshToken: string): Promise<LoginResponse> => {
+    const response = await api.post(
+      API_ENDPOINTS.adminRefresh,
+      {},
+      {
+        headers: {
+          'X-Refresh-Token': refreshToken,
+        },
       }
+    );
 
-      const response = await api.post(
-        API_ENDPOINTS.adminRefresh,
-        {},
-        {
-          headers: {
-            'X-Refresh-Token': tokens.refreshToken,
-          },
-        }
-      );
-
-      if (!response.data.data) {
-        throw new Error('Failed to refresh tokens');
-      }
-
-      return response.data.data;
-    } catch (error) {
-      console.error('Token refresh error:', error);
-      authService.clearTokens();
-      throw error;
+    if (!response.data.data) {
+      throw new Error('Failed to refresh tokens');
     }
-  },
 
-  // Token storage management
-  storeTokens: (accessToken: string, refreshToken: string, csrfToken: string) => {
+    return response.data.data;
+  },
+};
+
+export const authService = {
+  storeTokens: (accessToken: string, refreshToken: string, csrfToken: string): void => {
     localStorage.setItem('JWT_TOKEN', accessToken);
     localStorage.setItem('JWT_REFRESH_TOKEN', refreshToken);
     localStorage.setItem('JWT_CSRF_TOKEN', csrfToken);
@@ -95,7 +72,7 @@ export const authService = {
     };
   },
 
-  clearTokens: () => {
+  clearTokens: (): void => {
     localStorage.removeItem('JWT_TOKEN');
     localStorage.removeItem('JWT_REFRESH_TOKEN');
     localStorage.removeItem('JWT_CSRF_TOKEN');
@@ -107,12 +84,10 @@ export const authService = {
     return !!tokens.accessToken;
   },
 
-  // Get access token for API calls
   getAccessToken: (): string | null => {
     return localStorage.getItem('JWT_TOKEN');
   },
 
-  // Get CSRF token for API calls
   getCsrfToken: (): string | null => {
     return localStorage.getItem('JWT_CSRF_TOKEN');
   },
