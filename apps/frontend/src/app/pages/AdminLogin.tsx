@@ -4,10 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 
 export function AdminLogin() {
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  const { login, isAuthenticated, isAdmin } = useAuth();
+  const { login, isAuthenticated, isAdmin, isLoggingIn, loginError } = useAuth();
   const location = useLocation();
 
   // Get the intended destination from location state, default to admin dashboard
@@ -20,16 +18,12 @@ export function AdminLogin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
-
     try {
       await login(password);
       // Navigation will happen automatically via the Navigate component above
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      // Error is already handled by the context and shown via loginError
+      console.error('Login failed:', error);
     }
   };
 
@@ -57,23 +51,25 @@ export function AdminLogin() {
               onChange={(e) => setPassword(e.target.value)}
               className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:text-sm"
               placeholder="Admin password"
-              disabled={loading}
+              disabled={isLoggingIn}
             />
           </div>
 
-          {error && (
+          {loginError && (
             <div className="rounded-md bg-red-50 p-4">
-              <div className="text-sm text-red-700">{error}</div>
+              <div className="text-sm text-red-700">
+                {loginError instanceof Error ? loginError.message : 'Login failed'}
+              </div>
             </div>
           )}
 
           <div>
             <button
               type="submit"
-              disabled={loading || !password.trim()}
+              disabled={isLoggingIn || !password.trim()}
               className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {loading ? (
+              {isLoggingIn ? (
                 <div className="flex items-center">
                   <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
                   Signing in...

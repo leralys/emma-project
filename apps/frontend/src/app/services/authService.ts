@@ -1,12 +1,6 @@
-import { AuthenticatedUser } from '@emma-project/types';
+import { AuthenticatedUser, LoginResponse } from '@emma-project/types';
 import { API_ENDPOINTS } from '../config/api';
 import api, { apiClient } from './api';
-
-export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  csrfToken: string;
-}
 
 export interface StoredTokens {
   accessToken: string | null;

@@ -1,77 +1,75 @@
 import { AuthenticatedUser } from '@emma-project/types';
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { authService } from '../services/authService';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { createContext, useContext } from 'react';
+import { queryKeys } from '../config/queryClient';
+import { authAPI, authService } from '../services/authService';
 
 interface AuthContextType {
   user: AuthenticatedUser | null;
   loading: boolean;
-  login: (password: string) => Promise<void>;
+  login: (password: string) => Promise<unknown>;
   logout: () => void;
   isAdmin: boolean;
   isAuthenticated: boolean;
+  isLoggingIn: boolean;
+  loginError: Error | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AuthenticatedUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const isAdmin = user?.roles?.includes('admin') ?? false;
-  const isAuthenticated = !!user;
-
-  useEffect(() => {
-    // Check if user is already logged in on app start
-    const initAuth = async () => {
-      try {
-        const tokens = authService.getStoredTokens();
-        if (tokens.accessToken) {
-          const userData = await authService.getMe();
-          setUser(userData);
+  // Get current user data
+  const { data: user, isLoading } = useQuery({
+    queryKey: queryKeys.auth.me(),
+    queryFn: authAPI.getMe,
+    enabled: authService.isAuthenticated(),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    retry: (failureCount, error: unknown) => {
+      // Don't retry on 401 (unauthorized)
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { status?: number } };
+        if (axiosError.response?.status === 401) {
+          return false;
         }
-      } catch {
-        // Token might be expired, clear storage
-        authService.clearTokens();
-      } finally {
-        setLoading(false);
       }
-    };
+      return failureCount < 2;
+    },
+  });
 
-    initAuth();
-  }, []);
-
-  const login = async (password: string) => {
-    try {
-      setLoading(true);
-      const response = await authService.login(password);
-
+  // Login mutation
+  const loginMutation = useMutation({
+    mutationFn: authAPI.login,
+    onSuccess: (data) => {
       // Store tokens
-      authService.storeTokens(response.accessToken, response.refreshToken, response.csrfToken);
+      authService.storeTokens(data.accessToken, data.refreshToken, data.csrfToken);
 
-      // Get user data
-      const userData = await authService.getMe();
-      setUser(userData);
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+      // Invalidate and refetch user data
+      queryClient.invalidateQueries({ queryKey: queryKeys.auth.me() });
+    },
+    onError: () => {
+      // Clear any existing tokens on login failure
+      authService.clearTokens();
+    },
+  });
 
+  // Logout function
   const logout = () => {
     authService.clearTokens();
-    setUser(null);
+    queryClient.clear();
     window.location.href = '/';
   };
 
   const value: AuthContextType = {
-    user,
-    loading,
-    login,
+    user: user || null,
+    loading: isLoading,
+    login: loginMutation.mutateAsync,
     logout,
-    isAdmin,
-    isAuthenticated,
+    isAdmin: user?.roles?.includes('admin') ?? false,
+    isAuthenticated: !!user,
+    isLoggingIn: loginMutation.isPending,
+    loginError: loginMutation.error,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

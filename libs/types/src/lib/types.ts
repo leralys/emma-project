@@ -32,3 +32,9 @@ export interface Timestamps {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  csrfToken: string;
+}
