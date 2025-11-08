@@ -5,6 +5,7 @@
     "ms-playwright.playwright",
     "dbaeumer.vscode-eslint",
     "bradlc.vscode-tailwindcss",
-    "Prisma.prisma"
+    "Prisma.prisma",
+    "ms-vscode.vscode-json"
   ]
 }
