@@ -1,6 +1,6 @@
 import { AuthenticatedUser } from '@emma-project/types';
 import { API_ENDPOINTS } from '../config/api';
-import { apiClient } from './api';
+import api, { apiClient } from './api';
 
 interface LoginResponse {
   accessToken: string;
@@ -58,7 +58,7 @@ export const authService = {
         throw new Error('No refresh token available');
       }
 
-      const response = await apiClient.post<LoginResponse>(
+      const response = await api.post(
         API_ENDPOINTS.adminRefresh,
         {},
         {

@@ -40,9 +40,8 @@ api.interceptors.response.use(
   (error) => {
     // Handle common errors
     if (error.response?.status === 401) {
-      // Clear tokens and redirect to main page
+      // Clear tokens
       authService.clearTokens();
-      window.location.href = '/';
     }
 
     return Promise.reject(error);

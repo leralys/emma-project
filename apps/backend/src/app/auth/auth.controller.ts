@@ -1,5 +1,13 @@
 import { AuthenticatedUser } from '@emma-project/types';
-import { Controller, Get, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  Req,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -17,6 +25,7 @@ export class AuthController {
    */
   @Post('admin/login')
   @UseGuards(AuthGuard('local'))
+  @HttpCode(200)
   @ApiOperation({ summary: 'Admin login' })
   @ApiBody({ type: LoginAdminDto })
   @ApiResponse({ status: 200, description: 'Returns access token, refresh token, and CSRF token' })
@@ -43,6 +52,7 @@ export class AuthController {
    */
   @Post('admin/refresh')
   @ApiOperation({ summary: 'Refresh access token using X-Refresh-Token header' })
+  @HttpCode(200)
   @ApiResponse({ status: 200, description: 'Returns new tokens' })
   @ApiResponse({ status: 401, description: 'Invalid or expired refresh token' })
   async refresh(
