@@ -7,6 +7,7 @@ import AdminLayout from './components/admin/AdminLayout';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Home from './pages/Home';
+import NotFound from './pages/NotFound';
 
 // Auth pages
 import AdminLogin from './pages/AdminLogin';
@@ -90,17 +91,7 @@ export function App() {
       />
 
       {/* 404 route */}
-      <Route
-        path="*"
-        element={
-          <div className="flex min-h-screen items-center justify-center bg-gray-50">
-            <div className="text-center">
-              <h1 className="mb-4 text-3xl font-bold text-gray-900">404 - Page Not Found</h1>
-              <p className="text-gray-600">The page you're looking for doesn't exist.</p>
-            </div>
-          </div>
-        }
-      />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
